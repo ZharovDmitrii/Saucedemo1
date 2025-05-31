@@ -9,6 +9,59 @@ import static enums.DepartmentNaming.PRODUCTS;
 import static org.testng.Assert.*;
 
 public class LoginTest extends BaseTest {
+
+    private TestFlow testFlow() {
+        return new TestFlow();
+    }
+
+    private class TestFlow {
+        public TestFlow openLoginPage() {
+            loginPage.open();
+            return this;
+        }
+
+        public TestFlow loginAsAdmin() {
+            loginPage.login(UserFactory.withAdminPermission());
+            return this;
+        }
+
+        public TestFlow verifyProductsPage() {
+            assertTrue(productsPage.titleIsDisplayed(), "Products page should be visible");
+            assertEquals(productsPage.getTitle(), PRODUCTS.getDisplayName(),
+                    "Page title should match expected");
+            return this;
+        }
+
+        public TestFlow addProductsToCart(String productName, int... indexes) {
+            productsPage.addToCart(productName);
+            for (int index : indexes) {
+                productsPage.addToCart(index);
+            }
+            return this;
+        }
+
+        public TestFlow openCartAndVerifyContents(String expectedProduct, int expectedCount) {
+            productsPage.openCart();
+            assertTrue(cartPage.getProductsNames().contains(expectedProduct),
+                    "Cart should contain: " + expectedProduct);
+            assertEquals(cartPage.getProductsNames().size(), expectedCount,
+                    "Cart should contain " + expectedCount + " items");
+            return this;
+        }
+
+        public TestFlow attemptLogin(String username, String password) {
+            loginPage.fillLoginInput(username);
+            loginPage.fillPasswordInput(password);
+            loginPage.clickSubmitBtn();
+            return this;
+        }
+
+        public void verifyLoginError(String expectedError) {
+            assertEquals(loginPage.getErrorMsg(), expectedError,
+                    "Error message should match expected");
+        }
+    }
+
     @Epic("Модуль логина интернет магазина")
     @Feature("Юридические лица")
     @Story("STG")
@@ -18,38 +71,29 @@ public class LoginTest extends BaseTest {
     @Issue("1")
     @Flaky
     @Test(description = "Проверка авторизации")
-        public void correctLogin() {
-        loginPage.open();
-        loginPage.login(UserFactory.withAdminPermission());
-        assertTrue(productsPage.titleIsDisplayed());
-        assertEquals(productsPage.getTitle(), PRODUCTS.getDisplayName());
-
-        productsPage.addToCart("Sauce Labs Backpack");
-        productsPage.isOpen();
-        productsPage.addToCart(0);
-        productsPage.addToCart(1);
-        productsPage.addToCart(2);
-        productsPage.openCart();
-        assertTrue(cartPage.getProductsNames().contains("Sauce Labs Backpack"));
-        assertEquals(cartPage.getProductsNames().size(), 3);
-        assertFalse(cartPage.getProductsNames().isEmpty());
+    public void correctLogin() {
+        testFlow()
+                .openLoginPage()
+                .loginAsAdmin()
+                .verifyProductsPage()
+                .addProductsToCart("Sauce Labs Backpack", 0, 1, 2)
+                .openCartAndVerifyContents("Sauce Labs Backpack", 3);
     }
 
-    @DataProvider(name = "incorrectLoginDate")
+    @DataProvider(name = "incorrectLoginData")
     public Object[][] loginData() {
         return new Object[][]{
                 {"locked_out_user", "secret_sauce", "Epic sadface: Sorry, this user has been locked out"},
                 {"", "secret_sauce", "Epic sadface: Username is required"},
-                {"standard_user", "", "Epic sadface: Password is required"},
+                {"standard_user", "", "Epic sadface: Password is required"}
         };
     }
 
-    @Test(dataProvider = "incorrectLoginDate")
+    @Test(dataProvider = "incorrectLoginData")
     public void incorrectLogin(String user, String pass, String errorMsg) {
-        loginPage.open();
-        loginPage.fillLoginInput(user);
-        loginPage.fillPasswordInput(pass);
-        loginPage.clickSubmitBtn();
-        assertEquals(loginPage.getErrorMsg(), errorMsg);
+        testFlow()
+                .openLoginPage()
+                .attemptLogin(user, pass)
+                .verifyLoginError(errorMsg);
     }
 }

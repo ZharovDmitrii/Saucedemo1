@@ -10,6 +10,8 @@ public class ProductsPage extends BasePage {
     private final By title2 = By.xpath("//*[text()='Products']");
     private static final String ADD_TO_CART_BUTTON_PATTERN = "//div[text()='%s']//ancestor::div[@class='inventory_item']//button";
 
+    private static final By CART_LINK = By.xpath("//*[@data-test='shopping-cart-link']");
+
     public ProductsPage(WebDriver driver) {
         super(driver);
     }
@@ -41,6 +43,6 @@ public class ProductsPage extends BasePage {
 
     @Step("Открытие корзины")
     public void openCart() {
-        driver.findElement(By.xpath("//*[@data-test='shopping-cart-link']")).click();
+        driver.findElement(CART_LINK).click();
     }
 }

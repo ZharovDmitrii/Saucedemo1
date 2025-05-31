@@ -2,6 +2,7 @@ package tests;
 
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
+import user.User;
 
 import static org.testng.Assert.*;
 import static user.UserFactory.withAdminPermission;
@@ -17,15 +18,57 @@ public class AddGoodsToCartTest extends BaseTest {
     @Test(description = "проверяем, что товары добавлены в корзину")
     @Flaky
     public void checkGoodsInCart() {
-        loginPage.open();
-        loginPage.login(withAdminPermission());
-        productsPage.isOpen();
-        productsPage.addToCart(0);
-        productsPage.addToCart(2);
-        productsPage.addToCart(3);
-        productsPage.openCart();
-        assertTrue(cartPage.getProductsNames().contains("Sauce Labs Backpack"));
-        assertEquals(cartPage.getProductsNames().size(), 3);
-        assertFalse(cartPage.getProductsNames().isEmpty());
+        new TestFlow()
+                .openLoginPage()
+                .loginAs(withAdminPermission())
+                .verifyProductsPageOpened()
+                .addProductsToCart(0, 2, 3)
+                .openCart()
+                .verifyCartContains("Sauce Labs Backpack")
+                .verifyCartItemsCount(3)
+                .verifyCartIsNotEmpty();
+    }
+
+    private class TestFlow {
+        public TestFlow openLoginPage() {
+            loginPage.open();
+            return this;
+        }
+
+        public TestFlow loginAs(User user) {
+            loginPage.login(user);
+            return this;
+        }
+
+        public TestFlow verifyProductsPageOpened() {
+            productsPage.isOpen();
+            return this;
+        }
+
+        public TestFlow addProductsToCart(int... indices) {
+            for (int index : indices) {
+                productsPage.addToCart(index);
+            }
+            return this;
+        }
+
+        public TestFlow openCart() {
+            productsPage.openCart();
+            return this;
+        }
+
+        public TestFlow verifyCartContains(String productName) {
+            assertTrue(cartPage.getProductsNames().contains(productName));
+            return this;
+        }
+
+        public TestFlow verifyCartItemsCount(int expectedCount) {
+            assertEquals(cartPage.getProductsNames().size(), expectedCount);
+            return this;
+        }
+
+        public void verifyCartIsNotEmpty() {
+            assertFalse(cartPage.getProductsNames().isEmpty());
+        }
     }
 }

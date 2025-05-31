@@ -14,12 +14,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <testing.version>7.4.0</testing.version>
         <aspectj.version>1.9.22.1</aspectj.version>
+        <selenium.version>4.32.0</selenium.version>
+        <allure.testing.version>2.13.9</allure.testing.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.32.0</version>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -40,7 +42,7 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-testng</artifactId>
-            <version>2.13.9</version>
+            <version>${allure.testing.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

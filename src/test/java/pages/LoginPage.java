@@ -39,7 +39,3 @@ public class LoginPage extends BasePage {
         return driver.findElement(errorSign).getText();
     }
 }
-
-
-
-
