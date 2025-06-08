@@ -34,7 +34,7 @@ public class BaseTest {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("start-maximized");
             options.addArguments("--guest");
-            //options.addArguments("headless");
+
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("edge")) {
             WebDriverManager.edgedriver().setup();
@@ -50,7 +50,8 @@ public class BaseTest {
         user = PropertyReader.getProperty("saucedemo1.user");
         password = PropertyReader.getProperty("saucedemo1.password");
     }
-@Step("Закрытие браузера")
+
+    @Step("Закрытие браузера")
     @AfterMethod
     public void close() {
         driver.quit();

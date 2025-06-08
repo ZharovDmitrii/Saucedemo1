@@ -41,7 +41,7 @@ public class AddGoodsToCartTest extends BaseTest {
         }
 
         public TestFlow verifyProductsPageOpened() {
-            productsPage.isOpen();
+            assertTrue(productsPage.isOpen(), "Страница товаров должна быть открыта");
             return this;
         }
 
@@ -67,8 +67,9 @@ public class AddGoodsToCartTest extends BaseTest {
             return this;
         }
 
-        public void verifyCartIsNotEmpty() {
+        public TestFlow verifyCartIsNotEmpty() {
             assertFalse(cartPage.getProductsNames().isEmpty());
+            return this;
         }
     }
 }

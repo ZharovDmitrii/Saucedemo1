@@ -33,7 +33,10 @@ public class LoginTest extends BaseTest {
         }
 
         public TestFlow addProductsToCart(String productName, int... indexes) {
-            productsPage.addToCart(productName);
+            if (productName != null && !productName.isEmpty()) {
+                productsPage.addToCart(productName);
+                return this;
+            }
             for (int index : indexes) {
                 productsPage.addToCart(index);
             }
@@ -76,7 +79,7 @@ public class LoginTest extends BaseTest {
                 .openLoginPage()
                 .loginAsAdmin()
                 .verifyProductsPage()
-                .addProductsToCart("Sauce Labs Backpack", 0, 1, 2)
+                .addProductsToCart("Sauce Labs Backpack", 1, 2)
                 .openCartAndVerifyContents("Sauce Labs Backpack", 3);
     }
 

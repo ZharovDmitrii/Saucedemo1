@@ -11,10 +11,14 @@ public class LoginPage extends BasePage {
     private static final By LOGIN_BUTTON = By.id("login-button");
     private final By errorSign = By.xpath("//*[@data-test='error']");
 
-    public LoginPage(WebDriver driver) { super(driver);}
+    public LoginPage(WebDriver driver) {
+        super(driver);
+    }
 
     @Step("Открытие браузера")
-    public void open() {driver.get(BASE_URL + "cart.html"); }
+    public void open() {
+        driver.get(BASE_URL);
+    }
 
     @Step("Вводим данные пользователя")
     public void login(User user) {
